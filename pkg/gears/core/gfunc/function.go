@@ -36,8 +36,13 @@ func (f *function) Name() string {
 	return s[len(s)-1]
 }
 
-func (f *function) NumIn() int  { return f.fn.Type().NumIn() }
-func (f *function) NumOut() int { return f.fn.Type().NumOut() }
+func (f *function) NumIn() int {
+	return f.fn.Type().NumIn()
+}
+
+func (f *function) NumOut() int {
+	return f.fn.Type().NumOut()
+}
 
 func (f *function) Call(args ...interface{}) ([]reflect.Value, error) {
 	argValues := make([]reflect.Value, 0, len(args))

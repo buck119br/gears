@@ -28,7 +28,9 @@ func (v *value) String() string {
 	return bytesToString(v.v)
 }
 
-func (v *value) Value() []byte { return v.v }
+func (v *value) Value() []byte {
+	return v.v
+}
 
 func (v *value) As(t Type) interface{} {
 	var x interface{}

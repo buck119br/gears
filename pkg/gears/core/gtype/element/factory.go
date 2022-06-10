@@ -14,4 +14,6 @@ func (f Factory) Name() string {
 	return s[len(s)-1]
 }
 
-func DefaultFactory() Element { return nil }
+func DefaultFactory() Element {
+	return nil
+}
