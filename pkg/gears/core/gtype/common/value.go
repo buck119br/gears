@@ -25,7 +25,7 @@ type value struct {
 }
 
 func (v *value) String() string {
-	return bytesToString(v.v)
+	return BytesToString(v.v)
 }
 
 func (v *value) Value() []byte {
@@ -37,23 +37,25 @@ func (v *value) As(t Type) interface{} {
 	var err error
 	switch t {
 	case Bool:
-		x, err = strconv.ParseBool(bytesToString(v.v))
+		x, err = strconv.ParseBool(BytesToString(v.v))
 	case Integer:
-		x, err = strconv.ParseInt(bytesToString(v.v), 10, 64)
+		x, err = strconv.ParseInt(BytesToString(v.v), 10, 64)
+	case Unsigned:
+		x, err = strconv.ParseUint(BytesToString(v.v), 10, 64)
 	case Float:
-		x, err = strconv.ParseFloat(bytesToString(v.v), 64)
+		x, err = strconv.ParseFloat(BytesToString(v.v), 64)
 	case String:
-		x, err = bytesToString(v.v), nil
+		x, err = BytesToString(v.v), nil
 	case Binary:
 		x, err = v.v, nil
 	case Timestamp:
-		x, err = time.Parse(time.RFC3339, bytesToString(v.v))
+		x, err = time.Parse(time.RFC3339Nano, BytesToString(v.v))
 	default:
 		x, err = nil, fmt.Errorf("invalid column type: [%d]", t)
 	}
 
 	if err != nil {
-		panic(fmt.Errorf("cannot parse value: [%s] as: [%s]", bytesToString(v.v), t))
+		panic(fmt.Errorf("cannot parse value: [%s] as: [%s]", BytesToString(v.v), t))
 	}
 
 	return x

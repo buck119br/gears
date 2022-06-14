@@ -3,8 +3,6 @@ package event
 import (
 	"fmt"
 	"reflect"
-	"strconv"
-	"time"
 
 	"github.com/buck119br/gears/pkg/gears/core/gtype/common"
 )
@@ -61,13 +59,7 @@ func marshalStruct(t reflect.Type, v reflect.Value) (UnstructuredData, error) {
 		}
 
 		fv := v.Field(i)
-
-		var fvs string
-		switch f.Type {
-		default:
-			fvs = fmt.Sprintf("%v", fv)
-		}
-
+		fvs := common.ReflectValueToString(fv)
 		ud[ft] = fvs
 	}
 
@@ -100,118 +92,23 @@ func Unmarshal(ud UnstructuredData, d interface{}) error {
 
 func unmarshalStruct(ud UnstructuredData, t reflect.Type, v reflect.Value) error {
 	for i := 0; i < t.NumField(); i++ {
-		f := t.Field(i)
+		ft := t.Field(i)
 
-		ft := f.Tag.Get(StructuredEventDataTag)
-		if len(ft) == 0 || ft == OmitTag {
+		fTag := ft.Tag.Get(StructuredEventDataTag)
+		if len(fTag) == 0 || fTag == OmitTag {
 			continue
 		}
 
-		fv := v.Field(i)
-
-		fvs, ok := ud[ft]
+		fvs, ok := ud[fTag]
 		if !ok {
 			continue
 		}
-
-		switch f.Type.Kind() {
-		case reflect.Bool:
-			fvr, err := strconv.ParseBool(fvs)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(fvr))
-
-		case reflect.Int8:
-			fvr, err := strconv.ParseInt(fvs, 10, 8)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(int8(fvr)))
-		case reflect.Int16:
-			fvr, err := strconv.ParseInt(fvs, 10, 16)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(int16(fvr)))
-		case reflect.Int32:
-			fvr, err := strconv.ParseInt(fvs, 10, 32)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(int32(fvr)))
-		case reflect.Int64:
-			fvr, err := strconv.ParseInt(fvs, 10, 64)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(fvr))
-
-		case reflect.Uint8:
-			fvr, err := strconv.ParseUint(fvs, 10, 8)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(uint8(fvr)))
-		case reflect.Uint16:
-			fvr, err := strconv.ParseUint(fvs, 10, 16)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(uint16(fvr)))
-		case reflect.Uint32:
-			fvr, err := strconv.ParseUint(fvs, 10, 32)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(uint32(fvr)))
-		case reflect.Uint64:
-			fvr, err := strconv.ParseUint(fvs, 10, 64)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(uint64(fvr)))
-
-		case reflect.Float32:
-			fvr, err := strconv.ParseFloat(fvs, 32)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(float32(fvr)))
-
-		case reflect.Float64:
-			fvr, err := strconv.ParseFloat(fvs, 64)
-			if err != nil {
-				return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-			}
-			fv.Set(reflect.ValueOf(fvr))
-
-		case reflect.String:
-			fv.Set(reflect.ValueOf(fvs))
-
-		case reflect.Array:
-			switch f.Type.Elem().Kind() {
-			case reflect.Uint8:
-				fv.Set(reflect.ValueOf(common.AnyToBytes(fvs)))
-			default:
-				return fmt.Errorf("field: [%s] type: [%v] not support", f.Name, f.Type)
-			}
-
-		case reflect.Struct:
-			switch f.Type.String() {
-			case "time.Time":
-				fvr, err := time.Parse(fvs, time.RFC3339)
-				if err != nil {
-					return fmt.Errorf("field: [%s] parse error: [%v] with data: [%s]", f.Name, err, fvs)
-				}
-				fv.Set(reflect.ValueOf(fvr))
-			default:
-				return fmt.Errorf("field: [%s] type: [%v] not support", f.Name, f.Type)
-			}
-
-		default:
-			return fmt.Errorf("field: [%s] type: [%v] not support", f.Name, f.Type)
+		rv, err := common.ParseReflectValue(fvs, ft.Type)
+		if err != nil {
+			return fmt.Errorf("parse field: [%s] error: [%v]", ft.Name, err)
 		}
+		fv := v.Field(i)
+		fv.Set(rv)
 	}
 	return nil
 }
