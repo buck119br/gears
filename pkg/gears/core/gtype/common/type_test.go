@@ -23,7 +23,7 @@ func (ts *TypeSuite) TestType(c *C) {
 	u32 := uint32(32)
 	u64 := uint64(64)
 	f32 := float32(1.1111)
-	f64 := float64(2.2222)
+	f64 := 2.2222
 	str := "abc"
 	a := [1]byte{'x'}
 	slice := []byte{'y'}

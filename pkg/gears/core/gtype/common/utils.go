@@ -8,6 +8,11 @@ import (
 	"unsafe"
 )
 
+// AnyToBytes converts value to byte slice
+func AnyToBytes(v interface{}) []byte {
+	return StringToBytes(AnyToString(v))
+}
+
 // AnyToString converts value to string
 func AnyToString(v interface{}) string {
 	return ReflectValueToString(reflect.ValueOf(v))
@@ -61,11 +66,6 @@ func ReflectValueToString(v reflect.Value) string {
 	}
 }
 
-// AnyToBytes converts value to byte slice
-func AnyToBytes(v interface{}) []byte {
-	return StringToBytes(AnyToString(v))
-}
-
 // BytesToString converts byte slice to string without memory allocation.
 // See https://groups.google.com/forum/#!msg/Golang-Nuts/ENgbUzYvCuU/90yGx7GUAgAJ .
 //
@@ -85,4 +85,130 @@ func StringToBytes(s string) []byte {
 		Cap:  strH.Len,
 	}
 	return *(*[]byte)(unsafe.Pointer(&sliceH))
+}
+
+func ParseReflectValue(s string, t reflect.Type) (reflect.Value, error) {
+	var fv reflect.Value
+	switch t.Kind() {
+	case reflect.Bool:
+		v, err := strconv.ParseBool(s)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(v), nil
+
+	case reflect.Int:
+		v, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(int(v)), nil
+	case reflect.Int8:
+		v, err := strconv.ParseInt(s, 10, 8)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(int8(v)), nil
+	case reflect.Int16:
+		v, err := strconv.ParseInt(s, 10, 16)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(int16(v)), nil
+	case reflect.Int32:
+		v, err := strconv.ParseInt(s, 10, 32)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(int32(v)), nil
+	case reflect.Int64:
+		v, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(v), nil
+
+	case reflect.Uint:
+		v, err := strconv.ParseUint(s, 10, 64)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(uint(v)), nil
+	case reflect.Uint8:
+		v, err := strconv.ParseUint(s, 10, 8)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(uint8(v)), nil
+	case reflect.Uint16:
+		v, err := strconv.ParseUint(s, 10, 16)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(uint16(v)), nil
+	case reflect.Uint32:
+		v, err := strconv.ParseUint(s, 10, 32)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(uint32(v)), nil
+	case reflect.Uint64:
+		v, err := strconv.ParseUint(s, 10, 64)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(uint64(v)), nil
+
+	case reflect.Float32:
+		v, err := strconv.ParseFloat(s, 32)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(float32(v)), nil
+	case reflect.Float64:
+		v, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+		}
+		return reflect.ValueOf(v), nil
+
+	case reflect.String:
+		return reflect.ValueOf(s), nil
+
+	case reflect.Array:
+		switch t.Elem().Kind() {
+		case reflect.Uint8:
+			arrayType := reflect.ArrayOf(len(s), t.Elem())
+			array := reflect.New(arrayType).Elem()
+			for i, ch := range s {
+				array.Index(i).Set(reflect.ValueOf(byte(ch)))
+			}
+			return array, nil
+		default:
+			return fv, fmt.Errorf("type: [%v] not support", t)
+		}
+
+	case reflect.Slice:
+		switch t.Elem().Kind() {
+		case reflect.Uint8:
+			return reflect.ValueOf(StringToBytes(s)), nil
+		default:
+			return fv, fmt.Errorf("type: [%v] not support", t)
+		}
+
+	case reflect.Struct:
+		switch t.String() {
+		case "time.Time":
+			v, err := time.Parse(time.RFC3339Nano, s)
+			if err != nil {
+				return fv, fmt.Errorf("parse error: [%v] with data: [%s]", err, s)
+			}
+			return reflect.ValueOf(v), nil
+		default:
+			return fv, fmt.Errorf("type: [%v] not support", t)
+		}
+
+	default:
+		return fv, fmt.Errorf("type: [%v] not support", t)
+	}
 }
