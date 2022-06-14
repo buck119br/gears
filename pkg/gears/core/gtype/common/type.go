@@ -36,25 +36,11 @@ func (t Type) String() string {
 	}
 }
 
-// TypeOf gets the ValueType of v.
+// TypeOf gets the Type of v.
 // Only part of Types are supported.
 func TypeOf(v interface{}) Type {
-	switch v.(type) {
-	case bool:
-		return Bool
-	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
-		return Integer
-	case float32, float64:
-		return Float
-	case string:
-		return String
-	case []byte:
-		return Binary
-	case time.Time:
-		return Timestamp
-	default:
-		panic(fmt.Errorf("invalid type: [%T]", v))
-	}
+	rt := reflect.TypeOf(v)
+	return TypeOfReflectType(rt)
 }
 
 // TypeOfReflectType returns the Type of reflect.Type t.
@@ -69,7 +55,7 @@ func TypeOfReflectType(t reflect.Type) Type {
 	case reflect.String:
 		return String
 
-	case reflect.Array:
+	case reflect.Array, reflect.Slice:
 		switch t.Elem().Kind() {
 		case reflect.Uint8:
 			return Binary
@@ -86,10 +72,10 @@ func TypeOfReflectType(t reflect.Type) Type {
 		}
 
 	case reflect.Interface:
-		return Binary
+		return TypeOfReflectType(t.Elem())
 
 	default:
-		panic(fmt.Errorf("invalid type: [%s]", t))
+		panic(fmt.Errorf("invalid reflect type: [%s]", t))
 	}
 }
 
@@ -108,6 +94,6 @@ func New(t Type) interface{} {
 	case Timestamp:
 		return time.Time{}
 	default:
-		panic(fmt.Errorf("invalid value type: [%s]", t))
+		panic(fmt.Errorf("invalid type: [%s]", t))
 	}
 }
