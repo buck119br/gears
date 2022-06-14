@@ -9,6 +9,7 @@ import (
 const (
 	Bool Type = iota
 	Integer
+	Unsigned
 	Float
 	String
 	Binary
@@ -23,6 +24,8 @@ func (t Type) String() string {
 		return "Bool"
 	case Integer:
 		return "Integer"
+	case Unsigned:
+		return "Unsigned"
 	case Float:
 		return "Float"
 	case String:
@@ -39,8 +42,7 @@ func (t Type) String() string {
 // TypeOf gets the Type of v.
 // Only part of Types are supported.
 func TypeOf(v interface{}) Type {
-	rt := reflect.TypeOf(v)
-	return TypeOfReflectType(rt)
+	return TypeOfReflectType(reflect.TypeOf(v))
 }
 
 // TypeOfReflectType returns the Type of reflect.Type t.
@@ -48,10 +50,15 @@ func TypeOfReflectType(t reflect.Type) Type {
 	switch t.Kind() {
 	case reflect.Bool:
 		return Bool
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return Integer
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return Unsigned
+
 	case reflect.Float32, reflect.Float64:
 		return Float
+
 	case reflect.String:
 		return String
 
@@ -59,6 +66,7 @@ func TypeOfReflectType(t reflect.Type) Type {
 		switch t.Elem().Kind() {
 		case reflect.Uint8:
 			return Binary
+			// TODO: other array or slice type
 		default:
 			panic(fmt.Errorf("invalid type: [%s]", t))
 		}
@@ -67,11 +75,12 @@ func TypeOfReflectType(t reflect.Type) Type {
 		switch t.String() {
 		case "time.Time":
 			return Timestamp
+			// TODO: other struct type
 		default:
 			panic(fmt.Errorf("invalid type: [%s]", t))
 		}
 
-	case reflect.Interface:
+	case reflect.Pointer, reflect.Interface:
 		return TypeOfReflectType(t.Elem())
 
 	default:
@@ -85,6 +94,8 @@ func New(t Type) interface{} {
 		return false
 	case Integer:
 		return int64(0)
+	case Unsigned:
+		return uint64(0)
 	case Float:
 		return float64(0)
 	case String:
