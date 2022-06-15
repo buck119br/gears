@@ -1,6 +1,7 @@
 package event
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/hamba/avro"
@@ -13,6 +14,7 @@ import (
 func NewUnstructuredDataEvent() event.Event {
 	e := &UnstructuredDataEvent{
 		M: event.NewMeta(),
+		L: event.NewLocal(),
 	}
 	return e
 }
@@ -33,6 +35,10 @@ func (e *UnstructuredDataEvent) Key() common.Key {
 
 func (e *UnstructuredDataEvent) Timestamp() time.Time {
 	return e.M.EventTime()
+}
+
+func (e *UnstructuredDataEvent) String() string {
+	return fmt.Sprintf("meta: [%s], data: [%v], local: [%s]", e.M, e.D, e.L)
 }
 
 func (e *UnstructuredDataEvent) Code() (event.UnstructuredData, error) {

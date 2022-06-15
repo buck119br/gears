@@ -1,12 +1,19 @@
 package event
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/buck119br/gears/pkg/gears/core/gtype/common"
 )
 
+func NewLocal() Local {
+	return new(local)
+}
+
 type Local interface {
+	fmt.Stringer
+
 	ProcessingTime() time.Time
 	IngestionTime() time.Time
 	Key() common.Key
@@ -25,6 +32,11 @@ type local struct {
 
 	KeyF         common.Key `json:"key"`
 	DestinationF string     `json:"destination"`
+}
+
+func (l *local) String() string {
+	return fmt.Sprintf("processing time: [%s], ingestion time: [%s], key: [%s], destination: [%s]",
+		common.AnyToString(l.ProcessingTimeF), common.AnyToString(l.IngestionTimeF), l.KeyF, l.DestinationF)
 }
 
 func (l *local) ProcessingTime() time.Time {

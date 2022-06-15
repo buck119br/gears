@@ -10,6 +10,7 @@ import (
 
 type KV interface {
 	element.Element
+	fmt.Stringer
 
 	Value() common.Value
 
