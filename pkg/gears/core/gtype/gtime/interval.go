@@ -4,18 +4,19 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Interval represents a half open interval in time.
 type Interval struct {
 	// The start point of the interval, inclusive
-	s Instant
+	s time.Time
 	// The end point of the interval, optional
-	e Instant
+	e time.Time
 }
 
-func NewInterval(startPoint, endPoint Instant) (Interval, error) {
-	if endPoint.Nanos() < startPoint.Nanos() {
+func NewInterval(startPoint, endPoint time.Time) (Interval, error) {
+	if endPoint.Before(startPoint) {
 		return Interval{}, ErrInvalidEndPoint
 	}
 
@@ -35,23 +36,23 @@ func ParseInterval(s string) (Interval, error) {
 	if err != nil {
 		return Interval{s: Min, e: Max}, fmt.Errorf("parse end: [%s] error: [%v]", slice[1], err)
 	}
-	return Interval{s: NewInstant(sNanos), e: NewInstant(eNanos)}, nil
-}
-
-func (i Interval) StartPoint() Instant {
-	return i.s
-}
-
-func (i Interval) EndPoint() Instant {
-	return i.e
+	return Interval{s: NewInstant(sNanos).Time(), e: NewInstant(eNanos).Time()}, nil
 }
 
 func (i Interval) String() string {
-	return fmt.Sprintf("%d-%d", i.s.nanos, i.e.nanos)
+	return fmt.Sprintf("%d-%d", i.s.UnixNano(), i.e.UnixNano())
+}
+
+func (i Interval) StartPoint() time.Time {
+	return i.s
+}
+
+func (i Interval) EndPoint() time.Time {
+	return i.e
 }
 
 func (i Interval) IsBounded() bool {
-	if i.e.Equals(Max) {
+	if i.e.Equal(Max) {
 		return false
 	}
 
@@ -59,13 +60,13 @@ func (i Interval) IsBounded() bool {
 }
 
 func (i Interval) Length() int64 {
-	if i.e.Equals(Max) {
+	if i.e.Equal(Max) {
 		return InfLength
 	}
 
-	return i.e.Nanos() - i.s.Nanos()
+	return i.e.UnixNano() - i.s.UnixNano()
 }
 
 func (i Interval) Equals(x Interval) bool {
-	return i.s.Equals(x.s) && i.e.Equals(x.e)
+	return i.s.Equal(x.s) && i.e.Equal(x.e)
 }

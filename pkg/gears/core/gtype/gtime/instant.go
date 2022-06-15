@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	// Zero represents the zero Instant value in Go.
-	Zero = NewInstant(0)
-	// Max represents the max Instant value in Go.
+	// Zero represents the zero time.Time value in Go.
+	Zero = NewInstant(0).Time()
+	// Max represents the max time.Time value in Go.
 	Max = Zero.Add(math.MaxInt64)
-	// Min represents the min Instant value in Go.
+	// Min represents the min time.Time value in Go.
 	Min = Zero.Add(math.MinInt64)
 )
 
