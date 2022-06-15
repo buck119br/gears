@@ -19,29 +19,29 @@ type Row interface {
 	Columns() []Column
 
 	WithKey(common.Key) Row
+	WithTimestamp(time.Time) Row
 
 	Check() error
 }
 
-func NewRow(d Driver, c Collection, op Operation, cols []Column, timestamp time.Time) Row {
+func NewRow(d Driver, c Collection, op Operation, cols []Column) Row {
 	r := newRow()
 	r.d = d
 	r.c = c
 	r.op = op
 	r.cols = cols
-	r.i = timestamp
 
 	return r
 }
 
 type row struct {
-	key common.Key
-
 	d    Driver
 	c    Collection
 	op   Operation
 	cols []Column
-	i    time.Time
+
+	key common.Key
+	t   time.Time
 }
 
 func newRow() *row {
@@ -59,7 +59,7 @@ func (r *row) Key() common.Key {
 }
 
 func (r *row) Timestamp() time.Time {
-	return r.i
+	return r.t
 }
 
 func (r *row) String() string {
@@ -76,8 +76,8 @@ func (r *row) String() string {
 		colsStrs = append(colsStrs, col.String())
 	}
 
-	return fmt.Sprintf("driver: [%s], collection: [%s], operation: [%s], columns: [%s], timestamp: [%d]",
-		dStr, cStr, r.op, strings.Join(colsStrs, ", "), r.i,
+	return fmt.Sprintf("driver: [%s], collection: [%s], operation: [%s], columns: [%s], key: [%s], timestamp: [%s]",
+		dStr, cStr, r.op, strings.Join(colsStrs, ", "), r.key, common.AnyToString(r.t),
 	)
 }
 
@@ -99,6 +99,11 @@ func (r *row) Columns() []Column {
 
 func (r *row) WithKey(k common.Key) Row {
 	r.key = k
+	return r
+}
+
+func (r *row) WithTimestamp(t time.Time) Row {
+	r.t = t
 	return r
 }
 
