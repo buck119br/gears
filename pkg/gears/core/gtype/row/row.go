@@ -3,10 +3,10 @@ package row
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/buck119br/gears/pkg/gears/core/gtype/common"
 	"github.com/buck119br/gears/pkg/gears/core/gtype/element"
-	"github.com/buck119br/gears/pkg/gears/core/gtype/gtime"
 )
 
 type Row interface {
@@ -23,7 +23,7 @@ type Row interface {
 	Check() error
 }
 
-func NewRow(d Driver, c Collection, op Operation, cols []Column, timestamp gtime.Instant) Row {
+func NewRow(d Driver, c Collection, op Operation, cols []Column, timestamp time.Time) Row {
 	r := newRow()
 	r.d = d
 	r.c = c
@@ -41,7 +41,7 @@ type row struct {
 	c    Collection
 	op   Operation
 	cols []Column
-	i    gtime.Instant
+	i    time.Time
 }
 
 func newRow() *row {
@@ -58,7 +58,7 @@ func (r *row) Key() common.Key {
 	return r.key
 }
 
-func (r *row) Timestamp() gtime.Instant {
+func (r *row) Timestamp() time.Time {
 	return r.i
 }
 
