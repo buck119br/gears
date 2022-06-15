@@ -13,6 +13,14 @@ const (
 	OmitTag string = "-"
 )
 
+type UnstructuredDataCoder interface {
+	Code() (UnstructuredData, error)
+}
+
+type UnstructuredDataDecoder interface {
+	Decode(UnstructuredData) error
+}
+
 type UnstructuredData map[string]string
 
 func (ud UnstructuredData) Union(d UnstructuredData) UnstructuredData {
