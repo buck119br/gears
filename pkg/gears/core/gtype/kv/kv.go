@@ -8,50 +8,51 @@ import (
 	"github.com/buck119br/gears/pkg/gears/core/gtype/element"
 )
 
-type KV interface {
+type KV[V any] interface {
 	element.Element
 	fmt.Stringer
 
 	Value() common.Value
 
-	WithTimestamp(time.Time) KV
+	WithTimestamp(time.Time) KV[V]
 }
 
-func NewKV(k common.Key, v common.Value) KV {
-	x := new(kv)
-	x.k = k
-	x.v = v
+func NewKV[V any](k common.Key, v common.Value) KV[V] {
+	x := &kv[V]{
+		k: k,
+		v: v,
+	}
 
 	return x
 }
 
-type kv struct {
+type kv[V any] struct {
 	k common.Key
 	v common.Value
 	i time.Time
 }
 
-func (x *kv) Type() element.Type {
+func (x *kv[V]) Type() element.Type {
 	return element.KV
 }
 
-func (x *kv) Key() common.Key {
+func (x *kv[V]) Key() common.Key {
 	return x.k
 }
 
-func (x *kv) Timestamp() time.Time {
+func (x *kv[V]) Timestamp() time.Time {
 	return x.i
 }
 
-func (x *kv) String() string {
+func (x *kv[V]) String() string {
 	return fmt.Sprintf("key: [%s], value: [%s]", x.k, x.v)
 }
 
-func (x *kv) Value() common.Value {
+func (x *kv[V]) Value() common.Value {
 	return x.v
 }
 
-func (x *kv) WithTimestamp(i time.Time) KV {
+func (x *kv[V]) WithTimestamp(i time.Time) KV[V] {
 	x.i = i
 	return x
 }
