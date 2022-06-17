@@ -2,7 +2,6 @@ package row
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/buck119br/gears/pkg/gears/core/gtype/common"
@@ -16,7 +15,7 @@ type Row interface {
 	Driver() Driver
 	Collection() Collection
 	Operation() Operation
-	Columns() []Column
+	Columns() Columns
 
 	WithKey(common.Key) Row
 	WithTimestamp(time.Time) Row
@@ -24,7 +23,7 @@ type Row interface {
 	Check() error
 }
 
-func NewRow(d Driver, c Collection, op Operation, cols []Column) Row {
+func NewRow(d Driver, c Collection, op Operation, cols Columns) Row {
 	r := newRow()
 	r.d = d
 	r.c = c
@@ -38,7 +37,7 @@ type row struct {
 	d    Driver
 	c    Collection
 	op   Operation
-	cols []Column
+	cols Columns
 
 	key common.Key
 	t   time.Time
@@ -71,13 +70,8 @@ func (r *row) String() string {
 		cStr = r.c.Name()
 	}
 
-	colsStrs := make([]string, 0, len(r.cols))
-	for _, col := range r.cols {
-		colsStrs = append(colsStrs, col.String())
-	}
-
 	return fmt.Sprintf("driver: [%s], collection: [%s], operation: [%s], columns: [%s], key: [%s], timestamp: [%s]",
-		dStr, cStr, r.op, strings.Join(colsStrs, ", "), r.key, common.AnyToString(r.t),
+		dStr, cStr, r.op, r.cols, r.key, common.AnyToString(r.t),
 	)
 }
 
@@ -93,7 +87,7 @@ func (r *row) Operation() Operation {
 	return r.op
 }
 
-func (r *row) Columns() []Column {
+func (r *row) Columns() Columns {
 	return r.cols
 }
 
@@ -108,13 +102,13 @@ func (r *row) WithTimestamp(t time.Time) Row {
 }
 
 func (r *row) Check() error {
-	if r.Driver() == nil {
+	if r.d == nil {
 		return fmt.Errorf("empty driver")
 	}
-	if r.Collection() == nil {
+	if r.c == nil {
 		return fmt.Errorf("empty collection")
 	}
-	if r.Columns() == nil || len(r.Columns()) == 0 {
+	if r.cols == nil || r.cols.Len() == 0 {
 		return fmt.Errorf("empty columns")
 	}
 	return nil

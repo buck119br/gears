@@ -9,7 +9,7 @@ import (
 type Column interface {
 	fmt.Stringer
 
-	Key() common.Key
+	Name() common.Key
 	Value() common.Value
 	Type() common.Type
 	IsPK() bool
@@ -17,29 +17,30 @@ type Column interface {
 	WithValue(common.Value) Column
 }
 
+func NewColumn[V any](n common.Key, v common.Value, t common.Type, isPK bool) Column {
+	c := &column{
+		n:    n,
+		v:    v,
+		t:    t,
+		isPK: isPK,
+	}
+
+	return c
+}
+
 type column struct {
-	k    common.Key
+	n    common.Key
 	v    common.Value
 	t    common.Type
 	isPK bool
 }
 
-func NewColumn(k common.Key, v common.Value, t common.Type, isPK bool) Column {
-	c := new(column)
-	c.k = k
-	c.v = v
-	c.t = t
-	c.isPK = isPK
-
-	return c
-}
-
 func (c *column) String() string {
-	return fmt.Sprintf("key: [%s], type: [%s], value: [%s], isPK: [%t]", c.k, c.t, common.AnyToString(c.v.As(c.t)), c.isPK)
+	return fmt.Sprintf("name: [%s], type: [%s], value: [%s], isPK: [%t]", c.n, c.t, c.v, c.isPK)
 }
 
-func (c *column) Key() common.Key {
-	return c.k
+func (c *column) Name() common.Key {
+	return c.n
 }
 
 func (c *column) Value() common.Value {
