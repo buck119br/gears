@@ -20,14 +20,13 @@ type Values interface {
 }
 
 func NewValues(w windows.Window, t time.Time) Values {
-	v := new(values)
-	v.k = common.NewKey(nil)
-
-	v.t = t
-
-	v.w = w
-	v.p = make(map[string]windows.Pane)
-	v.e = make(map[string]element.Buffer)
+	v := &values{
+		k: common.NewKey(""),
+		t: t,
+		w: w,
+		p: make(map[string]windows.Pane),
+		e: make(map[string]element.Buffer),
+	}
 
 	return v
 }

@@ -7,11 +7,11 @@ import (
 type Key interface {
 	fmt.Stringer
 
-	Value() []byte
+	Value() string
 }
 
-func NewKey(v []byte) Key {
-	k := &key{
+func NewKey(v string) Key {
+	k := key{
 		v: v,
 	}
 
@@ -19,13 +19,13 @@ func NewKey(v []byte) Key {
 }
 
 type key struct {
-	v []byte
+	v string
 }
 
-func (k *key) String() string {
-	return AnyToString(k.v)
+func (k key) String() string {
+	return k.v
 }
 
-func (k *key) Value() []byte {
+func (k key) Value() string {
 	return k.v
 }
