@@ -41,7 +41,7 @@ func (t Type) String() string {
 
 // TypeOf gets the Type of v.
 // Only part of Types are supported.
-func TypeOf(v interface{}) Type {
+func TypeOf(v any) Type {
 	return TypeOfReflectType(reflect.TypeOf(v))
 }
 
@@ -88,7 +88,7 @@ func TypeOfReflectType(t reflect.Type) Type {
 	}
 }
 
-func New(t Type) interface{} {
+func New(t Type) any {
 	switch t {
 	case Bool:
 		return false

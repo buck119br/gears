@@ -35,7 +35,7 @@ func (ud UnstructuredData) Union(d UnstructuredData) UnstructuredData {
 	return union
 }
 
-func Marshal(d interface{}) (UnstructuredData, error) {
+func Marshal(d any) (UnstructuredData, error) {
 	if d == nil {
 		return nil, fmt.Errorf("nil input")
 	}
@@ -74,7 +74,7 @@ func marshalStruct(t reflect.Type, v reflect.Value) (UnstructuredData, error) {
 	return ud, nil
 }
 
-func Unmarshal(ud UnstructuredData, d interface{}) error {
+func Unmarshal(ud UnstructuredData, d any) error {
 	if ud == nil || len(ud) == 0 {
 		return fmt.Errorf("empty raw data")
 	}

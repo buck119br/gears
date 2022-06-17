@@ -9,12 +9,12 @@ import (
 )
 
 // AnyToBytes converts value to byte slice
-func AnyToBytes(v interface{}) []byte {
+func AnyToBytes(v any) []byte {
 	return StringToBytes(AnyToString(v))
 }
 
 // AnyToString converts value to string
-func AnyToString(v interface{}) string {
+func AnyToString(v any) string {
 	return ReflectValueToString(reflect.ValueOf(v))
 }
 

@@ -54,7 +54,7 @@ func (e *UnstructuredDataEvent) Meta() event.Meta {
 	return e.M
 }
 
-func (e *UnstructuredDataEvent) Data() interface{} {
+func (e *UnstructuredDataEvent) Data() any {
 	return e.D
 }
 

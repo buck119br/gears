@@ -12,10 +12,10 @@ type Function interface {
 	NumIn() int
 	NumOut() int
 
-	Call(args ...interface{}) ([]reflect.Value, error)
+	Call(args ...any) ([]reflect.Value, error)
 }
 
-func NewFunction(fn interface{}) Function {
+func NewFunction(fn any) Function {
 	f := new(function)
 	f.fn = reflect.ValueOf(fn)
 
@@ -44,7 +44,7 @@ func (f *function) NumOut() int {
 	return f.fn.Type().NumOut()
 }
 
-func (f *function) Call(args ...interface{}) ([]reflect.Value, error) {
+func (f *function) Call(args ...any) ([]reflect.Value, error) {
 	argValues := make([]reflect.Value, 0, len(args))
 	for _, arg := range args {
 		argValues = append(argValues, reflect.ValueOf(arg))

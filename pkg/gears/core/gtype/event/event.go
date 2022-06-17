@@ -13,7 +13,7 @@ type Event interface {
 	UnstructuredDataDecoder
 
 	Meta() Meta
-	Data() interface{}
+	Data() any
 
 	Local() Local
 }
