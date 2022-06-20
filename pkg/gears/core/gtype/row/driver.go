@@ -4,21 +4,22 @@ import (
 	"fmt"
 )
 
-func NewDriver(m Model, p Protocol, instance string) Driver {
-	d := new(driver)
-	d.m = m
-	d.p = p
-	d.instance = instance
-
-	return d
-}
-
 type Driver interface {
 	fmt.Stringer
 
 	Model() Model
 	Protocol() Protocol
 	Instance() string
+}
+
+func NewDriver(m Model, p Protocol, instance string) Driver {
+	d := &driver{
+		m:        m,
+		p:        p,
+		instance: instance,
+	}
+
+	return d
 }
 
 type driver struct {

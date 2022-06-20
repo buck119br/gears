@@ -51,9 +51,10 @@ func NewWallTime(w Watermark) Estimator {
 		panic(ErrNilWatermark)
 	}
 
-	wt := new(wallTime)
-	wt.t = Default
-	wt.w = w
+	wt := &wallTime{
+		t: Default,
+		w: w,
+	}
 
 	return wt
 }
@@ -94,9 +95,10 @@ func NewManual(w Watermark) ManualEstimator {
 		panic(ErrNilWatermark)
 	}
 
-	m := new(manual)
-	m.t = Manual
-	m.w = w
+	m := &manual{
+		t: Manual,
+		w: w,
+	}
 
 	return m
 }
@@ -139,9 +141,10 @@ func NewMonotonicallyIncreasing(w Watermark) TimestampObservingEstimator {
 		panic(ErrNilWatermark)
 	}
 
-	mi := new(monotonicallyIncreasing)
-	mi.t = TimestampObserving
-	mi.w = w
+	mi := &monotonicallyIncreasing{
+		t: TimestampObserving,
+		w: w,
+	}
 
 	return mi
 }

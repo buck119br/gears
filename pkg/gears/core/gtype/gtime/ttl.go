@@ -12,8 +12,9 @@ type TTL interface {
 }
 
 func NewTTL(d time.Duration) TTL {
-	t := new(ttl)
-	t.d = d
+	t := &ttl{
+		d: d,
+	}
 
 	return t
 }

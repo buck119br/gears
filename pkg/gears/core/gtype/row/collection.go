@@ -1,8 +1,9 @@
 package row
 
 func NewCollection(name string) Collection {
-	c := new(collection)
-	c.name = name
+	c := &collection{
+		name: name,
+	}
 
 	return c
 }

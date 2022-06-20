@@ -20,8 +20,9 @@ type Model interface {
 }
 
 func NewModel(name string) Model {
-	m := new(model)
-	m.name = name
+	m := &model{
+		name: name,
+	}
 
 	return m
 }

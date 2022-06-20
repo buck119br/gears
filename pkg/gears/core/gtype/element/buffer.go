@@ -22,9 +22,10 @@ type Buffer interface {
 // And the underlying buffer will not be allocated until the first Set is called.
 // Notice that Buffer is not concurrent-safe.
 func NewBuffer(capacity int) Buffer {
-	b := new(buffer)
-	b.cap = capacity
-	b.b = nil
+	b := &buffer{
+		cap: capacity,
+		b:   nil,
+	}
 	return b
 }
 

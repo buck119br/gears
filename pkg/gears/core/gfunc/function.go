@@ -16,8 +16,9 @@ type Function interface {
 }
 
 func NewFunction(fn any) Function {
-	f := new(function)
-	f.fn = reflect.ValueOf(fn)
+	f := &function{
+		fn: reflect.ValueOf(fn),
+	}
 
 	if f.fn.Type().Kind() != reflect.Func {
 		panic(fmt.Errorf("function expected"))

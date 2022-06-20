@@ -11,7 +11,8 @@ type GlobalWindow interface {
 }
 
 func NewGlobalWindow() GlobalWindow {
-	return new(globalWindow)
+	gw := &globalWindow{}
+	return gw
 }
 
 type globalWindow struct{}

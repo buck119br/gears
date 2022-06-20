@@ -6,11 +6,6 @@ import (
 	"github.com/google/uuid"
 )
 
-func NewMetaBuilder() MetaBuilder {
-	mb := new(metaBuilder)
-	return mb
-}
-
 type MetaBuilder interface {
 	Build() Meta
 
@@ -18,6 +13,11 @@ type MetaBuilder interface {
 	WithId(string) MetaBuilder
 	WithEventType(string) MetaBuilder
 	WithSender(string) MetaBuilder
+}
+
+func NewMetaBuilder() MetaBuilder {
+	mb := &metaBuilder{}
+	return mb
 }
 
 type metaBuilder struct {

@@ -7,12 +7,6 @@ import (
 	"github.com/buck119br/gears/pkg/gears/core/gtype/common"
 )
 
-// NewMeta returns an uninitialized instance of Meta.
-// MetaBuilder is recommended for creating an Event.
-func NewMeta() Meta {
-	return new(MetaT)
-}
-
 type Meta interface {
 	fmt.Stringer
 
@@ -20,6 +14,13 @@ type Meta interface {
 	Id() string
 	EventType() string
 	Sender() string
+}
+
+// NewMeta returns an uninitialized instance of Meta.
+// MetaBuilder is recommended for creating an Event.
+func NewMeta() Meta {
+	m := &MetaT{}
+	return m
 }
 
 type MetaT struct {

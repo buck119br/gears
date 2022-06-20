@@ -7,10 +7,6 @@ import (
 	"github.com/buck119br/gears/pkg/gears/core/gtype/common"
 )
 
-func NewLocal() Local {
-	return new(local)
-}
-
 type Local interface {
 	fmt.Stringer
 
@@ -24,6 +20,11 @@ type Local interface {
 	WithIngestionTime(time.Time) Local
 	WithKey(common.Key) Local
 	WithDestination(string) Local
+}
+
+func NewLocal() Local {
+	l := &local{}
+	return l
 }
 
 type local struct {

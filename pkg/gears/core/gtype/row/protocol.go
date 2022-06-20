@@ -11,8 +11,9 @@ type Protocol interface {
 }
 
 func NewProtocol(name string) Protocol {
-	p := new(protocol)
-	p.name = name
+	p := &protocol{
+		name: name,
+	}
 
 	return p
 }

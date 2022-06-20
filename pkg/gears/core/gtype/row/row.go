@@ -24,11 +24,12 @@ type Row interface {
 }
 
 func NewRow(d Driver, c Collection, op Operation, cols Columns) Row {
-	r := newRow()
-	r.d = d
-	r.c = c
-	r.op = op
-	r.cols = cols
+	r := &row{
+		d:    d,
+		c:    c,
+		op:   op,
+		cols: cols,
+	}
 
 	return r
 }
@@ -41,12 +42,6 @@ type row struct {
 
 	key common.Key
 	t   time.Time
-}
-
-func newRow() *row {
-	r := new(row)
-
-	return r
 }
 
 func (r *row) Type() element.Type {
