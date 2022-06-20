@@ -25,7 +25,7 @@ type watermark struct {
 }
 
 func (wm *watermark) String() string {
-	return fmt.Sprintf("Watermark: [%s]", common.AnyToString(wm.i))
+	return fmt.Sprintf("%s", common.AnyToString(wm.i))
 }
 
 func (wm *watermark) Type() element.Type {
