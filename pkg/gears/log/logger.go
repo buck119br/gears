@@ -4,18 +4,18 @@ import (
 	"github.com/golang/glog"
 )
 
-func Infof(format string, args ...interface{}) {
+func Infof(format string, args ...any) {
 	glog.Infof(format, args...)
 }
 
-func Warningf(format string, args ...interface{}) {
+func Warningf(format string, args ...any) {
 	glog.Warningf(format, args...)
 }
 
-func Errorf(format string, args ...interface{}) {
+func Errorf(format string, args ...any) {
 	glog.Errorf(format, args...)
 }
 
-func Fatalf(format string, args ...interface{}) {
+func Fatalf(format string, args ...any) {
 	glog.Fatalf(format, args...)
 }

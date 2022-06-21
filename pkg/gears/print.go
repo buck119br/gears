@@ -24,7 +24,7 @@ func Print(df Dataflow, inputs []Dataset) {
 	}
 }
 
-func doPrint(inputs, outputs []source.Source, args ...interface{}) {
+func doPrint(inputs, outputs []source.Source, args ...any) {
 	var wg sync.WaitGroup
 
 	for _, input := range inputs {

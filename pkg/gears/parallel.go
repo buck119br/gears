@@ -6,7 +6,7 @@ import (
 	"github.com/buck119br/gears/pkg/gears/transform/parallel"
 )
 
-func Parallel(df Dataflow, o parallel.Option, f DoFunction, inputs []Dataset, args ...interface{}) []Dataset {
+func Parallel(df Dataflow, o parallel.Option, f DoFunction, inputs []Dataset, args ...any) []Dataset {
 	// edge
 	fn := gfunc.NewFunction(f)
 	n := df.Graph().AddNode(graph.Parallel, fn, args...).WithConcurrency(o.Concurrency())

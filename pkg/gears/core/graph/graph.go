@@ -16,7 +16,7 @@ type Graph interface {
 	Nodes() []Node
 	Edges() []Edge
 
-	AddNode(op Operation, fn gfunc.Function, args ...interface{}) Node
+	AddNode(op Operation, fn gfunc.Function, args ...any) Node
 	AddEdge() Edge
 
 	Check() error
@@ -63,7 +63,7 @@ func (g *graph) Edges() []Edge {
 	return g.edges
 }
 
-func (g *graph) AddNode(op Operation, fn gfunc.Function, args ...interface{}) Node {
+func (g *graph) AddNode(op Operation, fn gfunc.Function, args ...any) Node {
 	n := NewNode(op, fn, args...)
 	g.nodes = append(g.nodes, n)
 	n.WithId(fmt.Sprintf("%d", len(g.nodes)-1))
