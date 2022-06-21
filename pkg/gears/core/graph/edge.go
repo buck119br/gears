@@ -21,52 +21,52 @@ type Edge interface {
 }
 
 func NewEdge() Edge {
-	e := &multiEdge{}
+	e := &edge{}
 
 	return e
 }
 
-type multiEdge struct {
+type edge struct {
 	id      string
 	bounded bool
 	stage   int
 }
 
-func (e *multiEdge) String() string {
+func (e *edge) String() string {
 	return fmt.Sprintf("id: [%s], bounded: [%t], stage: [%d]", e.id, e.bounded, e.stage)
 }
 
-func (e *multiEdge) Id() string {
+func (e *edge) Id() string {
 	return e.id
 }
 
-func (e *multiEdge) Bounded() bool {
+func (e *edge) Bounded() bool {
 	return e.bounded
 }
 
-func (e *multiEdge) Stage() int {
+func (e *edge) Stage() int {
 	return e.stage
 }
 
-func (e *multiEdge) WithId(id string) Edge {
+func (e *edge) WithId(id string) Edge {
 	e.id = id
 	return e
 }
 
-func (e *multiEdge) WithBounded(bounded bool) Edge {
+func (e *edge) WithBounded(bounded bool) Edge {
 	e.bounded = bounded
 	return e
 }
 
-func (e *multiEdge) WithStage(stage int) Edge {
+func (e *edge) WithStage(stage int) Edge {
 	e.stage = stage
 	return e
 }
 
-func (e *multiEdge) Check() error {
+func (e *edge) Check() error {
 	return nil
 }
 
-func (e *multiEdge) Build() error {
+func (e *edge) Build() error {
 	return nil
 }
