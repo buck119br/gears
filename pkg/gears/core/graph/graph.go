@@ -66,7 +66,7 @@ func (g *graph) Edges() []Edge {
 func (g *graph) AddNode(op Operation, fn gfunc.Function, args ...any) Node {
 	n := NewNode(op, fn, args...)
 	g.nodes = append(g.nodes, n)
-	n.WithId(fmt.Sprintf("%d", len(g.nodes)-1))
+	n.WithLabel(fmt.Sprintf("%d", len(g.nodes)-1))
 
 	return n
 }
@@ -74,7 +74,7 @@ func (g *graph) AddNode(op Operation, fn gfunc.Function, args ...any) Node {
 func (g *graph) AddEdge() Edge {
 	e := NewEdge()
 	g.edges = append(g.edges, e)
-	e.WithId(fmt.Sprintf("%d", len(g.edges)-1))
+	e.WithLabel(fmt.Sprintf("%d", len(g.edges)-1))
 
 	return e
 }
@@ -140,7 +140,7 @@ func (g *graph) Build() (plan.Plan, error) {
 	}
 
 	for _, e := range g.edges {
-		e.WithId(fmt.Sprintf("%d.%s", e.Stage(), e.Id()))
+		e.WithLabel(fmt.Sprintf("%d.%s", e.Stage(), e.Label()))
 	}
 
 	return nil, nil

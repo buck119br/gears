@@ -7,12 +7,12 @@ import (
 type Edge interface {
 	fmt.Stringer
 
-	Id() string
+	Label() string
 	// Bounded returns whether the dateset is bounded.
 	Bounded() bool
 	Stage() int
 
-	WithId(string) Edge
+	WithLabel(string) Edge
 	WithBounded(bool) Edge
 	WithStage(int) Edge
 
@@ -27,17 +27,17 @@ func NewEdge() Edge {
 }
 
 type edge struct {
-	id      string
+	label   string
 	bounded bool
 	stage   int
 }
 
 func (e *edge) String() string {
-	return fmt.Sprintf("id: [%s], bounded: [%t], stage: [%d]", e.id, e.bounded, e.stage)
+	return fmt.Sprintf("label: [%s], bounded: [%t], stage: [%d]", e.label, e.bounded, e.stage)
 }
 
-func (e *edge) Id() string {
-	return e.id
+func (e *edge) Label() string {
+	return e.label
 }
 
 func (e *edge) Bounded() bool {
@@ -48,8 +48,8 @@ func (e *edge) Stage() int {
 	return e.stage
 }
 
-func (e *edge) WithId(id string) Edge {
-	e.id = id
+func (e *edge) WithLabel(label string) Edge {
+	e.label = label
 	return e
 }
 

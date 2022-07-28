@@ -10,7 +10,7 @@ import (
 type Node interface {
 	fmt.Stringer
 
-	Id() string
+	Label() string
 	Type() NodeType
 	Stage() int
 
@@ -21,7 +21,7 @@ type Node interface {
 	Out() []Outbound
 	Concurrency() int
 
-	WithId(string) Node
+	WithLabel(string) Node
 	WithStage(int) Node
 
 	AddIn(...Inbound) Node
@@ -44,7 +44,7 @@ func NewNode(op Operation, fn gfunc.Function, args ...any) Node {
 }
 
 type node struct {
-	id    string
+	label string
 	t     NodeType
 	stage int
 
@@ -57,22 +57,22 @@ type node struct {
 }
 
 func (n *node) String() string {
-	ibIds := make([]string, 0, len(n.in))
+	ibLabels := make([]string, 0, len(n.in))
 	for _, ib := range n.in {
-		ibIds = append(ibIds, ib.From().Id())
+		ibLabels = append(ibLabels, ib.From().Label())
 	}
-	obIds := make([]string, 0, len(n.out))
+	obLabels := make([]string, 0, len(n.out))
 	for _, ob := range n.out {
-		obIds = append(obIds, ob.To().Id())
+		obLabels = append(obLabels, ob.To().Label())
 	}
-	fnStr := fmt.Sprintf("id: [%s], type: [%s], stage: [%d], operation: [%s], function: [%s], concurrency: [%d]",
-		n.id, n.t, n.stage, n.op, n.fn.Name(), n.concurrency)
+	fnStr := fmt.Sprintf("label: [%s], type: [%s], stage: [%d], operation: [%s], function: [%s], concurrency: [%d]",
+		n.label, n.t, n.stage, n.op, n.fn.Name(), n.concurrency)
 
-	return fmt.Sprintf("inbounds: [%s] -> node: [%s] -> outbounds: [%s]", strings.Join(ibIds, ", "), fnStr, strings.Join(obIds, ", "))
+	return fmt.Sprintf("inbounds: [%s] -> node: [%s] -> outbounds: [%s]", strings.Join(ibLabels, ", "), fnStr, strings.Join(obLabels, ", "))
 }
 
-func (n *node) Id() string {
-	return n.id
+func (n *node) Label() string {
+	return n.label
 }
 
 func (n *node) Type() NodeType {
@@ -107,8 +107,8 @@ func (n *node) Concurrency() int {
 	return n.concurrency
 }
 
-func (n *node) WithId(id string) Node {
-	n.id = id
+func (n *node) WithLabel(label string) Node {
+	n.label = label
 	return n
 }
 
