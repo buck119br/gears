@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	_ "github.com/ClickHouse/clickhouse-go/v2"
+
 	"github.com/buck119br/gears/pkg/gears/core/gtype/row"
 	"github.com/buck119br/gears/pkg/gears/log"
 )
