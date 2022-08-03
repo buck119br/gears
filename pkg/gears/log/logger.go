@@ -4,6 +4,10 @@ import (
 	"github.com/golang/glog"
 )
 
+func Debugf(format string, args ...any) {
+	glog.Infof(format, args...)
+}
+
 func Infof(format string, args ...any) {
 	glog.Infof(format, args...)
 }
