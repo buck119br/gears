@@ -14,6 +14,7 @@ const (
 
 var (
 	ClickHouseSQL = row.NewProtocol("ClickHouseSQL")
+	MySQL         = row.NewProtocol("MySQL")
 	PostgreSQL    = row.NewProtocol("PostgreSQL")
 )
 

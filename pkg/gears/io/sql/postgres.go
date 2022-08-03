@@ -14,7 +14,11 @@ import (
 )
 
 func NewPostgresDatabase() Database {
-	return &postgresDatabase{}
+	db := &postgresDatabase{
+		ready: false,
+	}
+
+	return db
 }
 
 type postgresDatabase struct {
@@ -55,20 +59,16 @@ func (p *postgresDatabase) Get() (*sql.DB, error) {
 	if !p.ready {
 		return nil, ErrDatabaseNotReady
 	}
-	if !p.needPing() {
-		return p.db, nil
-	}
 
-	log.Debugf("postgres database get ping ...")
 	err := p.ping()
 	if err == nil {
 		return p.db, nil
 	}
-	log.Errorf("postgres database get ping error: [%v]", err)
+	log.Errorf("postgres database ping error: [%v]", err)
 
-	log.Warningf("postgres database get instance re-init ...")
+	log.Warningf("postgres database instance re-init ...")
 	p.ready = false
-	if err = p.instanceInit(); err != nil {
+	if err := p.instanceInit(); err != nil {
 		return nil, fmt.Errorf("instance re-init error: [%v]", err)
 	}
 	p.ready = true
@@ -116,12 +116,15 @@ func (p *postgresDatabase) instanceInit() error {
 		return fmt.Errorf("ping error: [%v]", err)
 	}
 
-	log.Infof("postgres database instance init finished")
-
 	return nil
 }
 
 func (p *postgresDatabase) ping() error {
+	if !p.needPing() {
+		return nil
+	}
+
+	log.Debugf("postgres database ping ...")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(p.c.GetInstanceConfig().ConnectTimeout)*time.Second)
 	defer cancel()
 	if err := p.db.PingContext(ctx); err != nil {

@@ -14,9 +14,11 @@ import (
 )
 
 func NewClickHouseDatabase() Database {
-	ch := new(clickHouseDatabase)
+	db := &clickHouseDatabase{
+		ready: false,
+	}
 
-	return ch
+	return db
 }
 
 type clickHouseDatabase struct {
@@ -57,18 +59,14 @@ func (ch *clickHouseDatabase) Get() (*sql.DB, error) {
 	if !ch.ready {
 		return nil, ErrDatabaseNotReady
 	}
-	if !ch.needPing() {
-		return ch.db, nil
-	}
 
-	log.Debugf("clickhouse database get ping ...")
 	err := ch.ping()
 	if err == nil {
 		return ch.db, nil
 	}
-	log.Errorf("clickhouse database get ping error: [%v]", err)
+	log.Errorf("clickhouse database  ping error: [%v]", err)
 
-	log.Warningf("clickhouse database get instance re-init ...")
+	log.Warningf("clickhouse database instance re-init ...")
 	ch.ready = false
 	if err = ch.instanceInit(); err != nil {
 		return nil, fmt.Errorf("instance re-init error: [%v]", err)
@@ -112,12 +110,15 @@ func (ch *clickHouseDatabase) instanceInit() error {
 		return fmt.Errorf("ping error: [%v]", err)
 	}
 
-	log.Infof("clickhouse database instance init finished")
-
 	return nil
 }
 
 func (ch *clickHouseDatabase) ping() error {
+	if !ch.needPing() {
+		return nil
+	}
+
+	log.Debugf("clickhouse database ping ...")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(ch.c.GetInstanceConfig().ConnectTimeout)*time.Second)
 	defer cancel()
 	if err := ch.db.PingContext(ctx); err != nil {
