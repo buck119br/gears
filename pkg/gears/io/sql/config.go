@@ -25,4 +25,7 @@ type InstanceConfig struct {
 
 	// PostgreSQL exclusive
 	SSLMode string
+
+	// MySQL exclusive
+	Charset string
 }
