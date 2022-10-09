@@ -26,6 +26,8 @@ func driverNameFromProtocol(protocol row.Protocol) string {
 	switch protocol {
 	case ClickHouseSQL:
 		return "clickhouse"
+	case MySQL:
+		return "mysql"
 	case PostgreSQL:
 		return "postgres"
 	default:
