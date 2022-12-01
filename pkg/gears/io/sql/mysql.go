@@ -52,6 +52,18 @@ func (my *mysqlDatabase) Init(config Config) error {
 	return nil
 }
 
+func (my *mysqlDatabase) Close() error {
+	my.mu.Lock()
+	defer my.mu.Unlock()
+
+	if !my.ready {
+		return nil
+	}
+
+	log.Infof("mysql database closing ...")
+	return my.db.Close()
+}
+
 func (my *mysqlDatabase) Get() (*sql.DB, error) {
 	my.mu.Lock()
 	defer my.mu.Unlock()
