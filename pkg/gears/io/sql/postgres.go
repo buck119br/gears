@@ -52,6 +52,18 @@ func (p *postgresDatabase) Init(config Config) error {
 	return nil
 }
 
+func (p *postgresDatabase) Close() error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	if !p.ready {
+		return nil
+	}
+
+	log.Infof("postgres database closing ...")
+	return p.db.Close()
+}
+
 func (p *postgresDatabase) Get() (*sql.DB, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()

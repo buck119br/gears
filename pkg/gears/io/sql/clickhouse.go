@@ -52,6 +52,18 @@ func (ch *clickHouseDatabase) Init(config Config) error {
 	return nil
 }
 
+func (ch *clickHouseDatabase) Close() error {
+	ch.mu.Lock()
+	defer ch.mu.Unlock()
+
+	if !ch.ready {
+		return nil
+	}
+
+	log.Infof("clickhouse database closing ...")
+	return ch.db.Close()
+}
+
 func (ch *clickHouseDatabase) Get() (*sql.DB, error) {
 	ch.mu.Lock()
 	defer ch.mu.Unlock()

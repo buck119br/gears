@@ -6,5 +6,6 @@ import (
 
 type Database interface {
 	Init(Config) error
+	Close() error
 	Get() (*sql.DB, error)
 }
